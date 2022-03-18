@@ -36,28 +36,7 @@ function logout() {
 function switchRole() {
   const permissionStore = usePermissionStore()
 
-  const users = [
-    {
-      id: 1,
-      name: '大脸怪(admin)',
-      avatar: 'https://gitee.com/zclzone/res/raw/master/qs-zone/blob/img/lADPDiQ3QDTwsz3NAarNAaw_428_426.jpg',
-      email: 'Ronnie@123.com',
-      role: ['admin'],
-    },
-    {
-      id: 2,
-      name: '大脸怪(editor)',
-      avatar: 'https://gitee.com/zclzone/res/raw/master/qs-zone/blob/img/lADPDiQ3QDTwsz3NAarNAaw_428_426.jpg',
-      email: 'Ronnie@123.com',
-      role: ['editor'],
-    },
-    {
-      id: 3,
-      name: '访客(guest)',
-      avatar: 'https://gitee.com/zclzone/res/raw/master/qs-zone/blob/img/lADPDiQ3QDTwsz3NAarNAaw_428_426.jpg',
-      role: [],
-    },
-  ]
+  const users = []
 
   const switchUser = users[+userStore.userId % users.length]
   resetRouter()

@@ -1,31 +1,35 @@
 import { defineStore } from 'pinia'
 import { asyncRoutes, basicRoutes } from '@/router/routes'
-
-function hasPermission(route, role) {
-  const routeRole = route.meta?.role ? route.meta.role : []
-  if (!role.length || !routeRole.length) {
-    return false
-  }
-  return role.some((item) => routeRole.includes(item))
-}
-
-function filterAsyncRoutes(routes = [], role) {
-  const ret = []
-  routes.forEach((route) => {
-    if (hasPermission(route, role)) {
-      const curRoute = {
-        ...route,
-        children: [],
+import Layout from '@/layout/index.vue'
+import { FlatToTree } from '@/utils'
+// function hasPermission(route, role) {
+//   const routeRole = route.meta?.role ? route.meta.role : []
+//   if (!role.length || !routeRole.length) {
+//     return false
+//   }
+//   return role.some((item) => routeRole.includes(item))
+// }
+// export const loadView = (view) => {
+//   return defineAsyncComponent(() => import(`@/view${view}.vue`))
+// }
+const modules = import.meta.glob('../../views/*/*.vue')
+export function filterAsyncRoutes(role) {
+  const ret = FlatToTree(role)
+  const async = ret.filter((route) => {
+    if (route.component == 'Layout') {
+      route.component = Layout
+      if (route.children) {
+        route.children.forEach((item) => {
+          item.component = modules[`../../views${item.component}.vue`]
+        })
+        return true
       }
-      if (route.children && route.children.length) {
-        curRoute.children = filterAsyncRoutes(route.children, role)
-      } else {
-        Reflect.deleteProperty(curRoute, 'children')
-      }
-      ret.push(curRoute)
+      return true
     }
+    return true
   })
-  return ret
+
+  return async
 }
 
 export const usePermissionStore = defineStore('permission', {
@@ -41,7 +45,7 @@ export const usePermissionStore = defineStore('permission', {
   },
   actions: {
     generateRoutes(role = []) {
-      const accessRoutes = filterAsyncRoutes(asyncRoutes, role)
+      const accessRoutes = filterAsyncRoutes(role)
       this.accessRoutes = accessRoutes
       return accessRoutes
     },

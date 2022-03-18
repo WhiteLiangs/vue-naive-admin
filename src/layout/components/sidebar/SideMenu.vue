@@ -14,16 +14,17 @@ const menuOptions = computed(() => {
   return generateOptions(permissionStore.routes, '')
 })
 
-function resolvePath(basePath, path) {
-  if (isExternal(path)) return path
-  return (
-    '/' +
-    [basePath, path]
-      .filter((path) => !!path && path !== '/')
-      .map((path) => path.replace(/(^\/)|(\/$)/g, ''))
-      .join('/')
-  )
-}
+// 在后台没有处理路由层级得时候需要用到转换
+// function resolvePath(basePath, path) {
+//   if (isExternal(path)) return path
+//   return (
+//     '/' +
+//     [basePath, path]
+//       .filter((path) => !!path && path !== '/')
+//       .map((path) => path.replace(/(^\/)|(\/$)/g, ''))
+//       .join('/')
+//   )
+// }
 
 function generateOptions(routes, basePath) {
   let options = []
@@ -32,10 +33,12 @@ function generateOptions(routes, basePath) {
       let curOption = {
         label: (route.meta && route.meta.title) || route.name,
         key: route.name,
-        path: resolvePath(basePath, route.path),
+        // path: resolvePath(basePath, route.path),
+        path: route.path,
       }
       if (route.children && route.children.length) {
-        curOption.children = generateOptions(route.children, resolvePath(basePath, route.path))
+        // curOption.children = generateOptions(route.children, resolvePath(basePath, route.path))
+        curOption.children = generateOptions(route.children)
       }
       if (curOption.children && curOption.children.length <= 1) {
         if (curOption.children.length === 1) {
@@ -50,6 +53,7 @@ function generateOptions(routes, basePath) {
 }
 
 function handleMenuSelect(key, item) {
+  console.log(item, '跳转')
   if (isExternal(item.path)) {
     window.open(item.path)
   } else {

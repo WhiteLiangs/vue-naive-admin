@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import { login } from '@/api/auth'
 import { createLocalStorage } from '@/utils/cache'
 import { setToken } from '@/utils/token'
-
+import { encrypto } from '@/utils/crypto'
 const title = import.meta.env.VITE_APP_TITLE
 
 const router = useRouter()
@@ -13,7 +13,7 @@ const query = unref(router.currentRoute).query
 
 const loginInfo = ref({
   name: 'admin',
-  password: 123456,
+  password: 'zhangqian',
 })
 
 const ls = createLocalStorage({ prefixKey: 'login_' })
@@ -31,7 +31,7 @@ async function handleLogin() {
   }
   try {
     $message.loading('正在验证...')
-    const res = await login({ name, password: password.toString() })
+    const res = await login({ name, password: encrypto(password) })
     if (res.code === 0) {
       $message.success('登录成功')
       ls.set('loginInfo', { name, password })

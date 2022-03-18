@@ -74,3 +74,53 @@ export function debounce(method, wait, immediate) {
     }
   }
 }
+
+export function FlatToTree(arr) {
+  const a = []
+  arr.forEach((el) => {
+    const route = {
+      id: 0,
+      pid: 0,
+      name: '',
+      path: '',
+      component: '',
+      meta: {
+        title: '',
+      },
+    }
+    route.name = el.auth_mark
+    route.path = el.router_url
+    route.meta.title = el.auth_name
+    route.id = el.id
+    route.pid = el.pid
+    if (el.pid !== '0') {
+      route.component = el.router_url
+    } else {
+      route.component = 'Layout'
+    }
+    a.push(route)
+  })
+
+  // 将数据存储为 以 id 为 KEY 的 map 索引数据列
+  const map = {}
+  a.forEach(function (item) {
+    map[item.id] = item
+  })
+  //        console.log(map);
+  const val = []
+  a.forEach(function (item) {
+    // 以当前遍历项，的pid,去map对象中找到索引的id
+    if (item.path) {
+      const parent = map[item.pid]
+      // 如果找到索引，那么说明此项不在顶级当中,那么需要把此项添加到，他对应的父级中
+      if (parent) {
+        ;(parent.children || (parent.children = [])).push(item)
+      } else {
+        // 如果没有在map中找到对应的索引ID,那么直接把 当前的item添加到 val结果集中，作为顶级
+        val.push(item)
+      }
+    }
+  })
+  console.log(val)
+  return val
+}

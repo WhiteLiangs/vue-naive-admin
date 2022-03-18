@@ -21,7 +21,7 @@ export function setupInterceptor(service) {
          * * jwt token
          * ! 认证方案: Bearer
          */
-        config.headers.Authorization = 'Bearer ' + token
+        config.headers.Authorization = token
 
         return config
       }
@@ -34,7 +34,7 @@ export function setupInterceptor(service) {
         path: '/login',
         query: { ...currentRoute.query, redirect: currentRoute.path },
       })
-      return Promise.reject({ code: '-1', message: '未登录' })
+      return Promise.reject({ code: '1', message: '未登录' })
     },
     (error) => Promise.reject(error)
   )
@@ -49,7 +49,7 @@ export function setupInterceptor(service) {
        * TODO 此处可以根据后端返回的错误码自定义框架层面的错误处理
        */
       switch (code) {
-        case 401:
+        case 886:
           // 未登录（可能是token过期或者无效了）
           console.error(message)
           removeToken()
@@ -58,6 +58,10 @@ export function setupInterceptor(service) {
             path: '/login',
             query: { ...currentRoute.query, redirect: currentRoute.path },
           })
+          break
+        case 1:
+          // 请求错误
+          console.error(message)
           break
         case 403:
           // 没有权限
@@ -71,7 +75,7 @@ export function setupInterceptor(service) {
           break
       }
       // 已知错误resolve，在业务代码中作提醒，未知错误reject，捕获错误统一提示接口异常（9000以上为业务类型错误，需要跟后端确定好）
-      if ([401, 403, 404].includes(code) || code >= 9000) {
+      if ([886, 1, 403, 404].includes(code) || code >= 9000) {
         return Promise.resolve({ code, message })
       } else {
         console.error('【err】' + error)

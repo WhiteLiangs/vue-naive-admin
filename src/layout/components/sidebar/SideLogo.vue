@@ -6,7 +6,7 @@ const title = import.meta.env.VITE_APP_TITLE
 <template>
   <div class="logo">
     <n-icon size="36" color="#316c72">
-      <lastfm-square />
+      <game-controller-outline />
     </n-icon>
     <router-link to="/">
       <n-gradient-text type="primary">{{ title }}</n-gradient-text>

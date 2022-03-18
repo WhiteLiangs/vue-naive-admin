@@ -4,6 +4,7 @@ const router = useRouter()
 const { currentRoute } = router
 
 function handleBreadClick(path) {
+  console.log(currentRoute, 'd', path)
   if (path === currentRoute.value.path) return
   router.push(path)
 }

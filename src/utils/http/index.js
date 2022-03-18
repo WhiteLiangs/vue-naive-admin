@@ -11,7 +11,7 @@ function createAxios(option = {}) {
   return service
 }
 
-export const defAxios = createAxios()
+export const request = createAxios()
 
 export const testAxios = createAxios({
   baseURL: window.__APP__GLOB__CONF__?.VITE_APP_GLOB_BASE_API_TEST || import.meta.env.VITE_APP_GLOB_BASE_API_TEST,
